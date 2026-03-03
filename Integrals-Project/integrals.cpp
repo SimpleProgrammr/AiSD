@@ -1,11 +1,24 @@
-#include <complex>
 #include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
 #include <random>
-#include <sys/time.h>
 
+#if _WIN32
+#include <chrono>
+
+int gettimeofday(struct timeval* tp, struct timezone* tzp) {
+    namespace sc = std::chrono;
+    sc::system_clock::duration d = sc::system_clock::now().time_since_epoch();
+    sc::seconds s = sc::duration_cast<sc::seconds>(d);
+    tp->tv_sec = s.count();
+    tp->tv_usec = sc::duration_cast<sc::microseconds>(d - s).count();
+
+    return 0;
+}
+#elif defined(__linux__) || defined(__unix__)  || defined(__MACH__)
+    #include <sys/time.h>
+#endif
 #define timersub(tvp,uvp,vvp) do {(vvp)->tv_sec = (tvp)->tv_sec - (uvp)->tv_sec; (vvp)->tv_usec = (tvp)->tv_usec - (uvp)->tv_usec; if ((vvp)->tv_usec < 0) {(vvp)->tv_sec--;(vvp)->tv_usec += 1000000;}} while (0)
 
 using namespace std;
