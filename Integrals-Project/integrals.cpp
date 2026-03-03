@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include "file_cleaner.h"
 
 #if _WIN32
 #include <chrono>
@@ -126,7 +127,7 @@ void raport_normal_integral(long N,
 
     timersub(&endTV, &startTV, &diff);
 
-    SAVE << setprecision(10) << N << "\t" << surface<<"\t"<< diff.tv_usec/1000.0L+ static_cast<long double>(diff.tv_sec) * 1000L << endl;
+    SAVE << setprecision(10) << N << "\t" << surface <<"\t"<< diff.tv_usec/1000.0L+ static_cast<long double>(diff.tv_sec) * 1000L << endl;
 }
 
 void raport_probabilistic_integral(long N,
@@ -172,11 +173,11 @@ int main() {
         return 1;
     }
 
-    LEFT << "N\tCalculated Value\tTime"<<endl;
-    RIGHT << "N\tCalculated Value\tTime"<<endl;
-    MID << "N\tCalculated Value\tTime"<<endl;
-    TRAP << "N\tCalculated Value\tTime"<<endl;
-    MONTE << "N\tCalculated Value\tTime"<<endl;
+    LEFT << "N\tCalculated Value\tTime[ms]"<<endl;
+    RIGHT << "N\tCalculated Value\tTime[ms]"<<endl;
+    MID << "N\tCalculated Value\tTime[ms]"<<endl;
+    TRAP << "N\tCalculated Value\tTime[ms]"<<endl;
+    MONTE << "N\tCalculated Value\tTime[ms]"<<endl;
 
     timeval diff{}, startTV{}, endTV{};
     gettimeofday(&startTV, nullptr);
@@ -204,6 +205,7 @@ int main() {
             }
         }
     }
+#pragma omp barrier
     gettimeofday(&endTV, nullptr);
     timersub(&endTV, &startTV, &diff);
 
@@ -215,6 +217,13 @@ int main() {
     MID.close();
     TRAP.close();
     MONTE.close();
+
+
+    file_cleaner::replace_all("LEFT.txt", '.', ',');
+    file_cleaner::replace_all("RIGHT.txt", '.', ',');
+    file_cleaner::replace_all("MID.txt", '.', ',');
+    file_cleaner::replace_all("TRAP.txt", '.', ',');
+    file_cleaner::replace_all("MONTE.txt", '.', ',');
 
     return 0;
 }
