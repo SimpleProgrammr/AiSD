@@ -24,6 +24,13 @@ int gettimeofday(struct timeval* tp, struct timezone* tzp) {
 
 using namespace std;
 
+constexpr long max_N = 10000;
+const double a = 0;
+const double b = 1;
+const double bottom = 0;
+const double top = 1;
+constexpr long double predicted_value = 0.571633782; //Input from your calculator (for example wolframalpha.com)!!!
+
 //Tu zapisz swoją funkcję :)
 double FUNCTION_TO_TEST(double x) {
     return (sin(5*x)+1)/2;
@@ -127,7 +134,13 @@ void raport_normal_integral(long N,
 
     timersub(&endTV, &startTV, &diff);
 
-    SAVE << setprecision(10) << N << "\t" << surface <<"\t"<< diff.tv_usec/1000.0L+ static_cast<long double>(diff.tv_sec) * 1000L << endl;
+    const long double time_val_ms = diff.tv_usec / 1000.0L + static_cast<long double>(diff.tv_sec) * 1000L;
+
+    SAVE << setprecision(10) << N << "\t"
+        << surface << "\t"
+        << predicted_value << "\t"
+        << (surface - predicted_value) << "\t"
+        << time_val_ms << endl;
 }
 
 void raport_probabilistic_integral(long N,
@@ -153,13 +166,17 @@ void raport_probabilistic_integral(long N,
 
     timersub(&endTV, &startTV, &diff);
 
-    SAVE << setprecision(10) << N << "\t" << surface<<"\t"<< diff.tv_usec/1000.0L+ static_cast<long double>(diff.tv_sec) * 1000L << endl;
+    const long double time_val_ms = diff.tv_usec / 1000.0L + static_cast<long double>(diff.tv_sec) * 1000L;
+
+    SAVE << setprecision(10) << N << "\t"
+        << surface << "\t"
+        << predicted_value << "\t"
+        << (surface - predicted_value) << "\t"
+        << time_val_ms << endl;
 }
 
 int main() {
-    constexpr long max_N = 10000;
-    const double a = 0;
-    const double b = 1;
+
 
     // Otwieramy pliki poza sekcją równoległą
     ofstream LEFT("LEFT.txt");
@@ -172,12 +189,12 @@ int main() {
         cerr << "Błąd otwierania plików!" << std::endl;
         return 1;
     }
-
-    LEFT << "N\tCalculated Value\tTime[ms]"<<endl;
-    RIGHT << "N\tCalculated Value\tTime[ms]"<<endl;
-    MID << "N\tCalculated Value\tTime[ms]"<<endl;
-    TRAP << "N\tCalculated Value\tTime[ms]"<<endl;
-    MONTE << "N\tCalculated Value\tTime[ms]"<<endl;
+    string header = "N\tCalculated Value\tPredicted Value\tDifference\tTime[ms]\n";
+    LEFT << header;
+    RIGHT << header;
+    MID << header;
+    TRAP << header;
+    MONTE << header;
 
     timeval diff{}, startTV{}, endTV{};
     gettimeofday(&startTV, nullptr);
@@ -201,7 +218,7 @@ int main() {
                 raport_normal_integral(N, a, b, trapezoids_integral, TRAP);
 
 #pragma omp section
-                raport_probabilistic_integral(N, a, b, 0, 2, monte_carlo_integral, MONTE);
+                raport_probabilistic_integral(N, a, b, bottom, top, monte_carlo_integral, MONTE);
             }
         }
     }
