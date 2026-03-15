@@ -2,6 +2,7 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <list>
 #include <random>
 #include "file_cleaner.h"
 
@@ -25,9 +26,9 @@ int gettimeofday(struct timeval* tp, struct timezone* tzp) {
 using namespace std;
 
 constexpr long max_N = 10000;
-const double a = 0;
-const double b = 1;
-const double bottom = 0;
+constexpr double a = 0;
+constexpr double b = 1;
+constexpr double bottom = 0;
 const double top = 1;
 constexpr long double predicted_value = 0.571633782; //Input from your calculator (for example wolframalpha.com)!!!
 
@@ -36,7 +37,7 @@ double FUNCTION_TO_TEST(double x) {
     return (sin(5*x)+1)/2;
 }
 
-double left_rectangles_integral(double a, double b, long double parts, const function<double(double x)> &func) {
+double left_rectangles_integral(double a, const double b, long double parts, const function<double(double x)> &func) {
 
     double surface = 0;
 
