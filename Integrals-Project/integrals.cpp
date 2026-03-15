@@ -25,19 +25,21 @@ int gettimeofday(struct timeval* tp, struct timezone* tzp) {
 
 using namespace std;
 
-constexpr long max_N = 10000;
-constexpr double a = 0;
-constexpr double b = 1;
-constexpr double bottom = 0;
-const double top = 1;
-constexpr long double predicted_value = 0.571633782; //Input from your calculator (for example wolframalpha.com)!!!
+constexpr long max_N = 1000;
+const double a = 0;
+const double b = 2.5;
+const double bottom = 0;
+const double top = 2.5;
+constexpr long double predicted_value = 3.1099; //Input from your calculator (for example wolframalpha.com)!!!
 
 //Tu zapisz swoją funkcję :)
 double FUNCTION_TO_TEST(double x) {
-    return (sin(5*x)+1)/2;
+    return pow(pow((x-1),3)-sqrt(3*x+1),4)/10;
 }
 
-double left_rectangles_integral(double a, const double b, long double parts, const function<double(double x)> &func) {
+std::list<std::pair<double, double>> points = {};
+
+double left_rectangles_integral(double a, double b, long double parts, const function<double(double x)> &func) {
 
     double surface = 0;
 
@@ -108,6 +110,7 @@ double monte_carlo_integral(double a, double b, double bottom, double top, long 
         double pX = randX(re);
         double pY = randY(re);
 
+        points.emplace_back(pX,pY);
         if (abs(pY) <= abs(func(pX))) {
             hits++;
         }
@@ -144,6 +147,8 @@ void raport_normal_integral(long N,
         << time_val_ms << endl;
 }
 
+
+
 void raport_probabilistic_integral(long N,
     double a,
     double b,
@@ -157,6 +162,9 @@ void raport_probabilistic_integral(long N,
         long tries,
         const function<double(double x)> &f)> &func,
     ofstream &SAVE){
+
+    points.clear();
+
     timeval diff{}, startTV{}, endTV{};
 
     gettimeofday(&startTV, nullptr);
@@ -176,8 +184,20 @@ void raport_probabilistic_integral(long N,
         << time_val_ms << endl;
 }
 
-int main() {
+void save_points_from_monte_carlo() {
+    ofstream POINTS("POINTS.txt");
+    if (!POINTS.is_open()) {
+        throw runtime_error("Points file not open");
+    }
 
+    POINTS << "X\tY" << endl;
+    for (const auto &p : points) {
+        POINTS << setprecision(10) << p.first << "\t" << p.second << endl;
+    }
+    POINTS.close();
+}
+
+int main() {
 
     // Otwieramy pliki poza sekcją równoległą
     ofstream LEFT("LEFT.txt");
@@ -217,12 +237,15 @@ int main() {
 
 #pragma omp section
                 raport_normal_integral(N, a, b, trapezoids_integral, TRAP);
-
-#pragma omp section
-                raport_probabilistic_integral(N, a, b, bottom, top, monte_carlo_integral, MONTE);
             }
         }
     }
+
+
+    for (long N = 1; N <= max_N; N += 1) {
+        raport_probabilistic_integral(N,a,b,bottom,top,monte_carlo_integral,MONTE);
+    }
+    save_points_from_monte_carlo();
 #pragma omp barrier
     gettimeofday(&endTV, nullptr);
     timersub(&endTV, &startTV, &diff);
@@ -230,6 +253,7 @@ int main() {
     cout << "Calculations time: " << diff.tv_usec/1000.0L+ static_cast<long double>(diff.tv_sec) * 1000L << "ms\n\n" << endl;
 
     // Zamknięcie plików
+
     LEFT.close();
     RIGHT.close();
     MID.close();
