@@ -140,8 +140,8 @@ list<POINT> A_star_on_grid(GridMap grid, POINT start, POINT goal, unsigned char 
         trace_list.push_front(near_point);
         grid[near_point.x][near_point.y] = trace_value;
     }
-    clear_traces(grid,free_space_value,trace_value);
-    for (const POINT &p : forwardUsedPoints) {
+    clear_traces(grid, free_space_value, trace_value);
+    for (const POINT &p : trace_list) {
         grid[p.x][p.y] = trace_value;
     }
 
