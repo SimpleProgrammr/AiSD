@@ -4,7 +4,9 @@
 #include <list>
 #include <ostream>
 #include <random>
+#include "Points.h"
 #include "GridMap.cpp"
+
 
 using namespace std;
 
@@ -31,19 +33,21 @@ void establish_nearest(POINT p, POINT goal, double *min_dist, POINT* near_point)
     }
 }
 
-void establish_next_move(const list<POINT>& used_points,GridMap grid,  POINT goal, unsigned char free_space_value, double *min_dist, POINT* near_point) {
+void establish_next_move(const list<POINT>& used_points, const GridMap &grid, const POINT goal,
+    const unsigned char free_space_value, double *min_dist, POINT* near_point, void (*establishing_func)(POINT,POINT,double*, POINT*)) {
+
     for (const POINT &p : used_points) {
         if (p.x + 1 < grid.getHeight() && grid[p.x + 1][p.y] == free_space_value) {
-            establish_nearest(POINT{p.x+1,p.y}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x+1,p.y}, goal, min_dist, near_point);
         };
         if (p.y + 1 < grid.getWidth() && grid[p.x][p.y + 1] == free_space_value) {
-            establish_nearest(POINT{p.x,p.y+1}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x,p.y+1}, goal, min_dist, near_point);
         }
         if (p.x - 1 >= 0 && grid[p.x - 1][p.y] == free_space_value) {
-            establish_nearest(POINT{p.x-1,p.y}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x-1,p.y}, goal, min_dist, near_point);
         }
         if (p.y - 1 >= 0 && grid[p.x][p.y - 1] == free_space_value) {
-            establish_nearest(POINT{p.x,p.y-1}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x,p.y-1}, goal, min_dist, near_point);
         }
     }
 }
