@@ -151,14 +151,14 @@ list<POINT> A_star_on_grid(GridMap grid, POINT start, POINT goal, unsigned char 
 
 
 
-list<POINT> place_obstacles(GridMap grid, double rate) {
-    int obstacles_count = static_cast<int>(grid.getHeight() * grid.getWidth() * rate);
+list<POINT> place_obstacles(const GridMap &grid, const double rate) {
+    const int obstacles_count = static_cast<int>(static_cast<double>(grid.getHeight()) * static_cast<double>(grid.getWidth()) * rate);
     list<POINT> obstacles;
 
     random_device rd;
     mt19937 gen(rd());
-    uniform_real_distribution<double> rand_height(0.0, grid.getHeight());
-    uniform_real_distribution<double> rand_width(0.0, grid.getWidth());
+    uniform_real_distribution<double> rand_height(0.0, static_cast<double>(grid.getHeight()));
+    uniform_real_distribution<double> rand_width(0.0, static_cast<double>(grid.getWidth()));
 
     for (int i = 0; i < obstacles_count; i++) {
         int x = static_cast<int>(rand_height(gen));
