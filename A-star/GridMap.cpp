@@ -4,7 +4,7 @@
 
 #include "GridMap.h"
 
-void GridMap::_fill_grid_with(const unsigned char val = 0) const {
+void GridMap::_fill_grid_with(const unsigned char val) const {
     for (int i = 0; i < _height; i++) {
         _data[i]._fill_row_with(val);
     }
