@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cstdlib>
 #include <iostream>
 #include <list>
 #include <ostream>
@@ -9,21 +8,6 @@
 
 
 using namespace std;
-
-typedef struct point {
-    int x;
-    int y;
-    [[nodiscard]] bool isEqual(struct point p) const {
-        return x == p.x && y == p.y;
-    }
-    [[nodiscard]] double getDistance(struct point p)const {
-        return sqrt( pow( x - p.x, 2 ) + pow(y - p.y, 2 ) );
-    }
-} POINT;
-
-bool sortPointsByX(POINT p1, POINT p2) {
-    return p1.x > p2.x;
-}
 
 void establish_nearest(POINT p, POINT goal, double *min_dist, POINT* near_point) {
     double distance = p.getDistance(goal);
@@ -56,7 +40,7 @@ void establish_next_move(const list<POINT>& used_points, const GridMap &grid, co
 void print_grid(const GridMap &grid) {
     constexpr char block = static_cast<char>(178);
 
-    for (int i = grid.getHeight()-1; i >= 0; --i) {
+    for (long i = grid.getHeight()-1; i >= 0; --i) {
         cout << i%10 << " |";
         for (int j = 0; j < grid.getWidth(); j++) {
             auto point = grid[i][j];
