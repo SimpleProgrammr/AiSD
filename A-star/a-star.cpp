@@ -49,8 +49,8 @@ void establish_next_move(const list<POINT>& used_points,GridMap grid,  POINT goa
 }
 
 
-void print_grid(GridMap grid) {
-    char block = char(178);
+void print_grid(const GridMap &grid) {
+    constexpr char block = static_cast<char>(178);
 
     for (int i = grid.getHeight()-1; i >= 0; --i) {
         cout << i%10 << " |";
@@ -68,7 +68,7 @@ void print_grid(GridMap grid) {
     cout << endl;
 }
 
-void clear_traces(GridMap grid, unsigned char free_space_value, unsigned char trace_value) {
+void clear_traces(const GridMap &grid, unsigned char free_space_value, unsigned char trace_value) {
     for (int h = 0; h < grid.getHeight(); ++h) {
         for (int w = 0; w < grid.getWidth(); ++w) {
             if (grid[h][w] == trace_value) {
@@ -78,10 +78,10 @@ void clear_traces(GridMap grid, unsigned char free_space_value, unsigned char tr
     }
 }
 
-void print_grid(GridMap grid, POINT goal, POINT start) {
-    char block = char(178);
+void print_grid(const GridMap &grid, const POINT goal, const POINT start) {
+    constexpr char block = static_cast<char>(178);
 
-    for (int i = grid.getHeight()-1; i >= 0; --i) {
+    for (long i = grid.getHeight()-1; i >= 0; --i) {
         cout << i%10 << " |";
         for (int j = 0; j < grid.getWidth(); j++) {
             auto point = grid[i][j];
