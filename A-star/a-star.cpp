@@ -175,17 +175,7 @@ list<POINT> place_obstacles(GridMap grid, double rate) {
 }
 
 
-
-//TODO: Create conversion to alternative map expression (nodes)
-// struct cell {
-//     double distance;
-//     list<struct cell*> exits;
-// };
-// template <int height, int width>
-// void convert_grid() {
-// }
-
-POINT get_point_from_user(GridMap grid, const string& purpose = "") {
+POINT get_point_from_user(const GridMap &grid, const string& purpose = "") {
 
     while (true) {
         cout << purpose<<endl;
@@ -209,19 +199,18 @@ POINT get_point_from_user(GridMap grid, const string& purpose = "") {
 void speed_test(int height, int width, int repeats, int obstacles_reshuffles) ;
 
 int main() {
-    int height = 30, width = 60;
+    const int height = 10;
+    const int width = 80;
 
     GridMap grid = GridMap(height,width, 0);
 
     place_obstacles(grid, 0.15);
 
-
-
-    // POINT start = get_point_from_user<height,width>(grid, "Starting point");
-    // POINT goal = get_point_from_user<height,width>(grid, "Goal point");
-
-    POINT start = POINT{height/10,width/10};
-    POINT goal = POINT{height-height/2,width-width/2};
+     const POINT start = get_point_from_user(grid, "Starting point");
+     const POINT goal = get_point_from_user(grid, "Goal point");
+    //
+    // constexpr auto start = POINT{0,0};
+    // const auto goal = POINT{height - 1,width - 1};
 
     print_grid(grid,goal,start);
 
