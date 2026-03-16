@@ -130,15 +130,15 @@ list<POINT> A_star_on_grid(GridMap grid, POINT start, POINT goal, unsigned char 
     while ( !(trace_list.front().isEqual(start))) {
 
         double min_distance = numeric_limits<double>::max();
-        auto near_point = POINT{-1,-1};
+        auto next_point = POINT{-1,-1};
 
-        establish_next_move(trace_list,grid,start,trace_value,&min_distance,&near_point);
+        establish_next_move(trace_list, grid, start, trace_value, &min_distance, &next_point , establish_nearest);
 
-        if (near_point.isEqual(POINT{-1,-1})) {
+        if (next_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
         }
-        trace_list.push_front(near_point);
-        grid[near_point.x][near_point.y] = trace_value;
+        trace_list.push_front(next_point);
+        grid[next_point.x][next_point.y] = free_space_value;
     }
     clear_traces(grid, free_space_value, trace_value);
     for (const POINT &p : trace_list) {
