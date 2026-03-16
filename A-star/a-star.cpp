@@ -103,7 +103,8 @@ void print_grid(GridMap grid, POINT goal, POINT start) {
     cout << endl;
 }
 
-list<POINT> A_star_on_grid(GridMap grid, POINT start, POINT goal, unsigned char free_space_value = 0, unsigned char trace_value = 31) {
+list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT goal,
+    const unsigned char free_space_value = 0, const unsigned char trace_value = 31) {
     if (start.isEqual(goal))
         return list<POINT>{goal};
 
@@ -116,7 +117,7 @@ list<POINT> A_star_on_grid(GridMap grid, POINT start, POINT goal, unsigned char 
         double min_distance = numeric_limits<double>::max();
         POINT near_point = POINT{-1,-1};
 
-        establish_next_move(forwardUsedPoints,grid,goal,free_space_value,&min_distance,&near_point);
+        establish_next_move(forwardUsedPoints, grid, goal, free_space_value, &min_distance, &near_point, establish_nearest);
 
         if (near_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
