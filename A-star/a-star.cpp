@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <list>
 #include <ostream>
@@ -41,17 +42,52 @@ void print_grid(const GridMap &grid) {
     constexpr char block = static_cast<char>(178);
 
     for (long i = grid.getHeight()-1; i >= 0; --i) {
-        cout << i%10 << " |";
+        cout << i%10 << "|";
         for (int j = 0; j < grid.getWidth(); j++) {
             auto point = grid[i][j];
-            cout << (point < 1 ? ' ' : (point == 255 ? block : '*' )) << "|";
+            cout << (point < 1 ? ' ' : (point == 255 ? block : '*' )) << " ";
         }
 
         cout << endl;
     }
-    cout << "   0 ";
-    for (int i = 1; i < grid.getWidth(); i++) {
-        cout << i%10 << " ";
+    cout << "   ";
+    for (int i = 0; i < grid.getWidth(); i++) {
+        const int num = i%10;
+        cout << (num != 0 ? to_string(num) : " ") << " ";
+    }
+    cout << endl << "   ";
+    for (int i = 0; i < grid.getWidth()/10; i++) {
+        cout << std::left << std::setw(20) << i*10 ;
+    }
+    cout << endl;
+}
+
+void print_grid(const GridMap &grid, const POINT goal, const POINT start) {
+    constexpr char block = static_cast<char>(178);
+
+    for (long i = grid.getHeight()-1; i >= 0; --i) {
+        cout << i%10 << " |";
+        for (int j = 0; j < grid.getWidth(); j++) {
+            auto point = grid[i][j];
+            if (((goal.x == i && goal.y == j) || (start.x == i && start.y == j))) {
+                cout <<( point == 255 ? "#":"$") << " ";
+                continue;
+            }
+
+
+            cout << (point < 1 ? ' ' : (point == 255 ? block : '*' )) << " ";
+        }
+
+        cout << endl;
+    }
+    cout << "   ";
+    for (int i = 0; i < grid.getWidth(); i++) {
+        const int num = i%10;
+        cout << (num != 0 ? to_string(num) : " ") << " ";
+    }
+    cout << endl << "   ";
+    for (int i = 0; i < grid.getWidth()/10; i++) {
+        cout << std::left << std::setw(20) << i*10 ;
     }
     cout << endl;
 }
@@ -64,31 +100,6 @@ void clear_traces(const GridMap &grid, unsigned char free_space_value, unsigned 
             }
         }
     }
-}
-
-void print_grid(const GridMap &grid, const POINT goal, const POINT start) {
-    constexpr char block = static_cast<char>(178);
-
-    for (long i = grid.getHeight()-1; i >= 0; --i) {
-        cout << i%10 << " |";
-        for (int j = 0; j < grid.getWidth(); j++) {
-            auto point = grid[i][j];
-            if (((goal.x == i && goal.y == j) || (start.x == i && start.y == j))) {
-                cout <<( point == 255 ? "#":"$") << "|";
-                continue;
-            }
-
-
-            cout << (point < 1 ? ' ' : (point == 255 ? block : '*' )) << "|";
-        }
-
-        cout << endl;
-    }
-    cout << "   0 ";
-    for (int i = 1; i < grid.getWidth(); i++) {
-        cout << i%10 << " ";
-    }
-    cout << endl;
 }
 
 list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT goal,
@@ -194,6 +205,7 @@ int main() {
     GridMap grid = GridMap(height,width, 0);
 
     place_obstacles(grid, 0.15);
+    print_grid(grid);
 
      const POINT start = get_point_from_user(grid, "Starting point");
      const POINT goal = get_point_from_user(grid, "Goal point");
