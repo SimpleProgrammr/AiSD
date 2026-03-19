@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <list>
@@ -6,6 +7,7 @@
 #include <random>
 #include "Points.h"
 #include "GridMap.cpp"
+
 
 
 using namespace std;
@@ -21,6 +23,7 @@ void establish_nearest(POINT p, POINT goal, double *min_dist, POINT* near_point)
 void establish_next_move(const list<POINT>& used_points, const GridMap &grid, const POINT goal,
     const unsigned char free_space_value, double *min_dist, POINT* near_point, void (*establishing_func)(POINT,POINT,double*, POINT*)) {
 
+    long index = 0;
     for (const POINT &p : used_points) {
         if (p.x + 1 < grid.getHeight() && grid[p.x + 1][p.y] == free_space_value) {
             establishing_func(POINT{p.x+1,p.y}, goal, min_dist, near_point);
@@ -34,6 +37,7 @@ void establish_next_move(const list<POINT>& used_points, const GridMap &grid, co
         if (p.y - 1 >= 0 && grid[p.x][p.y - 1] == free_space_value) {
             establishing_func(POINT{p.x,p.y-1}, goal, min_dist, near_point);
         }
+        index++;
     }
 }
 
@@ -196,9 +200,81 @@ POINT get_point_from_user(const GridMap &grid, const string& purpose = "") {
     }
 }
 
-void speed_test(int height, int width, int repeats, int obstacles_reshuffles) ;
+void speed_test_random_obstacles(long height, long width, int obstacles_reshuffles = 1, int repeats = 10,
+                                 double obstacles_rate = 0.15, const std::string& save_file_name = "speedTestRandomObstacles.txt") {
+
+    std::ofstream sf = std::ofstream(save_file_name, ios::app);
+    if (!sf.is_open()) {
+        std::cerr << "Unable to open file" << std::endl;
+        throw std::runtime_error("Unable to open file");
+    }
+
+    list<POINT> trace;
+    double trace_len = 0;
+
+    long long avg_runTime = 0;
+    int error_count = 0;
+
+    POINT start = POINT{0,0}, goal = POINT{height-1,width-1};
+    double line_dist = height+width;
+
+    for (int i = 0; i < obstacles_reshuffles; i++) {
+        GridMap grid = GridMap(height, width, 0);
+
+
+
+        do {
+            grid._fill_grid_with(0);
+            place_obstacles(grid, obstacles_rate);
+        }while (grid[start.x][start.y] == 255 || grid[goal.x][goal.y] == 255);
+
+        long long duration = 0;
+        for (int j = 0; j < repeats; j++) {
+            auto start_time = std::chrono::high_resolution_clock::now();
+
+            trace = A_star_on_grid(grid, start, goal);
+
+            auto end_time = std::chrono::high_resolution_clock::now();
+
+            if (trace.front() == POINT{-1,-1}) {
+                i--;
+                break;
+            }
+            clear_traces(grid, 0, 31);
+
+            trace_len += trace.size();
+            duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+            cout << duration << endl;
+        }
+
+
+
+
+        avg_runTime += duration;
+    }
+    sf << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << trace_len/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
+    cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << trace_len/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
+
+    sf.close();
+}
+
 
 int main() {
+
+    std::ofstream sf = std::ofstream("speedTestRandomObstacles.txt");
+    if (!sf.is_open()) {
+        std::cerr << "Unable to open file" << std::endl;
+        throw std::runtime_error("Unable to open file");
+    }
+    sf << "Height\tWidth\tObstacles\tDistance_In_Line\tCalculated_Distance\tTime[us]" << std::endl;
+    sf.close();
+
+     for (long size = 10; size < 4000; size+=10) {
+         speed_test_random_obstacles(size,size,  1, 10, 0.1);
+    }
+    return 1;
+
+
     const int height = 10;
     const int width = 80;
 
@@ -207,11 +283,11 @@ int main() {
     place_obstacles(grid, 0.15);
     print_grid(grid);
 
-     const POINT start = get_point_from_user(grid, "Starting point");
-     const POINT goal = get_point_from_user(grid, "Goal point");
-    //
-    // constexpr auto start = POINT{0,0};
-    // const auto goal = POINT{height - 1,width - 1};
+    //  const POINT start = get_point_from_user(grid, "Starting point");
+    //  const POINT goal = get_point_from_user(grid, "Goal point");
+
+    constexpr auto start = POINT{0,0};
+    const auto goal = POINT{height - 1,width - 1};
 
     print_grid(grid,goal,start);
 
@@ -231,15 +307,3 @@ int main() {
 
 }
 
-
-// void speed_test(int height, int width, int repeats = 10, int obstacles_reshuffles = 1, double obstacles_rate = 0.15) {
-//     fill_n(&grid[0][0], height*width, 0);
-//
-//     int run_counter = 0;
-//     long double time_sum = 0;
-//
-//     for (int ob_r = 0; ob_r < obstacles_reshuffles; ob_r++ ) {
-//         place_obstacles<height,width>(grid, obstacles_rate);
-//     }
-//
-// }

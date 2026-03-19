@@ -13,6 +13,10 @@ typedef struct point {
     [[nodiscard]] double getDistance(struct point p)const {
         return sqrt( pow( x - p.x, 2 ) + pow(y - p.y, 2 ) );
     }
+
+    bool operator== (const point &p) {
+        return x == p.x && y == p.y;
+    };
 } POINT;
 
 inline bool sortPointsByX(const POINT p1, const POINT p2) {

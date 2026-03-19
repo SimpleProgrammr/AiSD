@@ -26,7 +26,7 @@ class GridMap {
 
         struct _row * _data;
 
-        void _fill_grid_with(unsigned char val) const;
+
 
     public:
         GridMap(long height, long width, unsigned char fill);
@@ -34,6 +34,7 @@ class GridMap {
         [[nodiscard]] long getHeight() const;
         [[nodiscard]] long getWidth() const;
 
+        void _fill_grid_with(unsigned char val) const;
         unsigned char operator()(long height, long width) const ;
         _row operator[](long height) const ;
 
