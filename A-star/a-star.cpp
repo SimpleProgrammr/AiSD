@@ -258,6 +258,73 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
     sf.close();
 }
 
+void runTest1() { // Varying only size
+    std::ofstream sf = std::ofstream("speedTestRandomObstacles.txt");
+    if (!sf.is_open()) {
+        std::cerr << "Unable to open file" << std::endl;
+        throw std::runtime_error("Unable to open file");
+    }
+    sf << "Height\tWidth\tObstacles\tDistance_In_Line\tCalculated_Distance\tTime[us]" << std::endl;
+    sf.close();
+
+#pragma omp parallel for schedule(dynamic) num_threads(15)
+    for (long size = 50; size <= 1500; size+=25) {
+        speed_test_random_obstacles(size,size,  1, 10, 0.1);
+    }
+}
+
+void runTest2() { // Varying amount of obstacles in different sizes
+    ofstream sf = std::ofstream("speedTestObstaclesRate.txt");
+    if (!sf.is_open()) {
+        std::cerr << "Unable to open file" << std::endl;
+        throw std::runtime_error("Unable to open file");
+    }
+    sf << "Height\tWidth\tObstacles\tDistance_In_Line\tCalculated_Distance\tTime[us]" << std::endl;
+    sf.close();
+
+    for (long size = 50; size < 1000; size+=50) {
+#pragma omp parallel for schedule(dynamic) num_threads(15)
+        for (int i = 0; i <= 30; i++) {
+            double obr = 0.1 + i * 0.01;
+            speed_test_random_obstacles(size, size, 1, 10, obr, "speedTestObstaclesRate.txt");
+        }
+    }
+}
+
+int manualRun() {
+    const int height = 10;
+    const int width = 80;
+
+    GridMap grid = GridMap(height,width, 0);
+
+    place_obstacles(grid, 0.15);
+    print_grid(grid);
+
+    //  const POINT start = get_point_from_user(grid, "Starting point");
+    //  const POINT goal = get_point_from_user(grid, "Goal point");
+
+    constexpr auto start = POINT{0,0};
+    const auto goal = POINT{height - 1,width - 1};
+
+    print_grid(grid,goal,start);
+
+    if (grid[start.x][start.y] == 255 || grid[goal.x][goal.y] == 255) {
+        cerr << "Unable to access those points"<<endl;
+        return 404;
+    }
+
+
+    list<POINT> possible_traces = A_star_on_grid(grid, start, goal);
+    if (possible_traces.back().isEqual(POINT{-1,-1})) {
+        cout << "Unable to solve problem." << endl << endl;
+        return 404;
+    }
+
+    print_grid(grid, goal, start);
+
+    return 1;
+}
+
 
 int main() {
 
