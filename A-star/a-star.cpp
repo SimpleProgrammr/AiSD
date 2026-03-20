@@ -328,13 +328,10 @@ int manualRun() {
 
 int main() {
 
-    std::ofstream sf = std::ofstream("speedTestRandomObstacles.txt");
-    if (!sf.is_open()) {
-        std::cerr << "Unable to open file" << std::endl;
-        throw std::runtime_error("Unable to open file");
-    }
-    sf << "Height\tWidth\tObstacles\tDistance_In_Line\tCalculated_Distance\tTime[us]" << std::endl;
-    sf.close();
+    //Choose an option
+    runTest1();
+    // runTest2();
+    // manualRun();
 
      for (long size = 10; size < 4000; size+=10) {
          speed_test_random_obstacles(size,size,  1, 10, 0.1);
