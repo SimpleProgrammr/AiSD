@@ -131,7 +131,7 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
     }
 
     list<POINT> trace_list = list<POINT>{goal};
-    grid[goal.x][goal.y] = trace_value;
+    grid[goal.x][goal.y] = free_space_value;
     while ( !(trace_list.front().isEqual(start))) {
 
         auto next_point = POINT{-1,-1};
