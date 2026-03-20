@@ -118,10 +118,9 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
 
     while ( !(forwardUsedPoints.front().isEqual(goal))) {
 
-        double min_distance = numeric_limits<double>::max();
         POINT near_point = POINT{-1,-1};
 
-        establish_next_move(forwardUsedPoints, grid, goal, free_space_value, &min_distance, &near_point, establish_nearest);
+        establish_next_move(forwardUsedPoints, grid, goal, free_space_value, &near_point, establish_nearest);
 
         if (near_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
@@ -133,11 +132,10 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
     list<POINT> trace_list = list<POINT>{goal};
     grid[goal.x][goal.y] = trace_value;
     while ( !(trace_list.front().isEqual(start))) {
-
-        double min_distance = numeric_limits<double>::max();
+        
         auto next_point = POINT{-1,-1};
 
-        establish_next_move(trace_list, grid, start, trace_value, &min_distance, &next_point , establish_nearest);
+        establish_next_move(trace_list, grid, start, trace_value, &next_point , establish_nearest);
 
         if (next_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
