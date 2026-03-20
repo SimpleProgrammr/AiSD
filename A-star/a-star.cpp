@@ -241,10 +241,11 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
                 break;
             }
             clear_traces(grid, 0, 31);
+            trace_len += trace.size()+1;
 
-            trace_len += trace.size();
-            duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-            cout << duration << endl;
+            auto t = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+            duration += t;
+            cout << t << endl;
         }
 
 
@@ -252,9 +253,13 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
 
         avg_runTime += duration;
     }
-    sf << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << trace_len/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
-    cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << trace_len/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
-
+    if (error_count >= 10) {
+        cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << -1 << "\t" << -1 << endl;
+    }
+    else {
+        sf << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << static_cast<double>(trace_len)/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
+        cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << static_cast<double>(trace_len)/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
+    }
     sf.close();
 }
 
