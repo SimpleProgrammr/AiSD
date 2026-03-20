@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -249,9 +250,6 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
             cout << t << endl;
         }
 
-
-
-
         avg_runTime += duration;
     }
     if (error_count >= 10) {
@@ -339,41 +337,7 @@ int main() {
     // runTest2();
     // manualRun();
 
-     for (long size = 10; size < 4000; size+=10) {
-         speed_test_random_obstacles(size,size,  1, 10, 0.1);
-    }
     return 1;
-
-
-    const int height = 10;
-    const int width = 80;
-
-    GridMap grid = GridMap(height,width, 0);
-
-    place_obstacles(grid, 0.15);
-    print_grid(grid);
-
-    //  const POINT start = get_point_from_user(grid, "Starting point");
-    //  const POINT goal = get_point_from_user(grid, "Goal point");
-
-    constexpr auto start = POINT{0,0};
-    const auto goal = POINT{height - 1,width - 1};
-
-    print_grid(grid,goal,start);
-
-    if (grid[start.x][start.y] == 255 || grid[goal.x][goal.y] == 255) {
-        cerr << "Unable to access those points"<<endl;
-        return 404;
-    }
-
-
-    list<POINT> possible_traces = A_star_on_grid(grid, start, goal);
-    if (possible_traces.back().isEqual(POINT{-1,-1})) {
-        cout << "Unable to solve problem." << endl << endl;
-        return 404;
-    }
-
-    print_grid(grid, goal, start);
 
 }
 
