@@ -22,21 +22,22 @@ void establish_nearest(POINT p, POINT goal, double *min_dist, POINT* near_point)
 }
 
 void establish_next_move(const list<POINT>& used_points, const GridMap &grid, const POINT goal,
-    const unsigned char free_space_value, double *min_dist, POINT* near_point, void (*establishing_func)(POINT,POINT,double*, POINT*)) {
+    const unsigned char free_space_value, POINT* near_point, void (*establishing_func)(POINT,POINT,double*, POINT*)) {
 
+    double min_dist = INFINITY;
     long index = 0;
     for (const POINT &p : used_points) {
         if (p.x + 1 < grid.getHeight() && grid[p.x + 1][p.y] == free_space_value) {
-            establishing_func(POINT{p.x+1,p.y}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x+1,p.y}, goal, &min_dist, near_point);
         };
         if (p.y + 1 < grid.getWidth() && grid[p.x][p.y + 1] == free_space_value) {
-            establishing_func(POINT{p.x,p.y+1}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x,p.y+1}, goal, &min_dist, near_point);
         }
         if (p.x - 1 >= 0 && grid[p.x - 1][p.y] == free_space_value) {
-            establishing_func(POINT{p.x-1,p.y}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x-1,p.y}, goal, &min_dist, near_point);
         }
         if (p.y - 1 >= 0 && grid[p.x][p.y - 1] == free_space_value) {
-            establishing_func(POINT{p.x,p.y-1}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x,p.y-1}, goal, &min_dist, near_point);
         }
         index++;
     }
@@ -132,7 +133,7 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
     list<POINT> trace_list = list<POINT>{goal};
     grid[goal.x][goal.y] = trace_value;
     while ( !(trace_list.front().isEqual(start))) {
-        
+
         auto next_point = POINT{-1,-1};
 
         establish_next_move(trace_list, grid, start, trace_value, &next_point , establish_nearest);
