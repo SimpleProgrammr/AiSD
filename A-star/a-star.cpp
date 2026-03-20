@@ -210,7 +210,7 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
     }
 
     list<POINT> trace;
-    double trace_len = 0;
+    long trace_len = 0;
 
     long long avg_runTime = 0;
     int error_count = 0;
@@ -218,7 +218,7 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
     POINT start = POINT{0,0}, goal = POINT{height-1,width-1};
     double line_dist = height+width;
 
-    for (int i = 0; i < obstacles_reshuffles; i++) {
+    for (int i = 0; i < obstacles_reshuffles && error_count < 10; i++) {
         GridMap grid = GridMap(height, width, 0);
 
 
@@ -238,6 +238,7 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
 
             if (trace.front() == POINT{-1,-1}) {
                 i--;
+                error_count++;
                 break;
             }
             clear_traces(grid, 0, 31);
