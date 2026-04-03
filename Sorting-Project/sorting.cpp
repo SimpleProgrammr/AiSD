@@ -49,4 +49,7 @@ int main() {
     // creating copy to maintain consistent data for test
     int* temp_arr = new int[lenght];
 
+    cout << "Insert sort: " << endl;
+    std::copy(array, array+lenght, temp_arr);
+    print_array(insert_sort(array, lenght), lenght);
 }
