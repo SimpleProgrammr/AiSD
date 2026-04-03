@@ -111,24 +111,26 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
     if (start.isEqual(goal))
         return list<POINT>{goal};
 
-    list<POINT> forwardUsedPoints = list<POINT>();
-    forwardUsedPoints.push_back(start);
+    list<POINT> trace_list = list<POINT>{start};
+    trace_list.push_back(start);
     grid[start.x][start.y] = trace_value;
 
-    while ( !(forwardUsedPoints.front().isEqual(goal))) {
+    while ( !(trace_list.front().isEqual(goal))) {
 
         POINT near_point = POINT{-1,-1};
 
-        establish_next_move(forwardUsedPoints, grid, goal, free_space_value, &near_point, establish_nearest);
+        establish_next_move(trace_list, grid, goal, free_space_value, &near_point, establish_nearest);
 
         if (near_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
         }
-        forwardUsedPoints.push_front(near_point);
+        trace_list.push_front(near_point);
         grid[near_point.x][near_point.y] = trace_value;
     }
 
-    list<POINT> trace_list = list<POINT>{goal};
+
+    trace_list.clear();
+    trace_list.push_front(goal);
     grid[goal.x][goal.y] = free_space_value;
     while ( !(trace_list.front().isEqual(start))) {
 
@@ -142,6 +144,7 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
         trace_list.push_front(next_point);
         grid[next_point.x][next_point.y] = free_space_value;
     }
+
     clear_traces(grid, free_space_value, trace_value);
     for (const POINT &p : trace_list) {
         grid[p.x][p.y] = trace_value;
@@ -269,7 +272,7 @@ void runTest1() { // Varying only size
     sf.close();
 
     for (long size = 50; size <= 1500; size+=25) {
-        speed_test_random_obstacles(size,size,  1, 10, 0.1);
+        speed_test_random_obstacles(size,size,  2, 10, 0.1);
     }
 }
 
@@ -291,12 +294,13 @@ void runTest2() { // Varying amount of obstacles in different sizes
 }
 
 int manualRun() {
-    const int height = 10;
-    const int width = 80;
+    const int height = 200;
+    const int width = 200;
 
     GridMap grid = GridMap(height,width, 0);
 
-    place_obstacles(grid, 0.15);
+    place_obstacles(grid, 0.38);
+
     print_grid(grid);
 
     //  const POINT start = get_point_from_user(grid, "Starting point");
@@ -304,13 +308,11 @@ int manualRun() {
 
     constexpr auto start = POINT{0,0};
     const auto goal = POINT{height - 1,width - 1};
+    grid[start.x][start.y] = 0;
+    grid[goal.x][goal.y] = 0;
 
     print_grid(grid,goal,start);
 
-    if (grid[start.x][start.y] == 255 || grid[goal.x][goal.y] == 255) {
-        cerr << "Unable to access those points"<<endl;
-        return 404;
-    }
 
 
     list<POINT> possible_traces = A_star_on_grid(grid, start, goal);
@@ -328,9 +330,9 @@ int manualRun() {
 int main() {
 
     //Choose an option
-    runTest1();
-    // runTest2();
-    // manualRun();
+    //runTest1();
+    //runTest2();
+    manualRun();
 
     return 1;
 
