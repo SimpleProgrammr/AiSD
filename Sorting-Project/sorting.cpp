@@ -6,13 +6,16 @@
 #include <random>
 
 #include "insert_sort.h"
+#include "selection_sort.h"
 
 using namespace std;
+
 
 void print_array(int *array, int lenght) {
     for (int i = 0; i < lenght; i++) {
         cout << array[i] << " ";
     }
+    cout << endl;
 }
 
 int *get_fully_random_array(int lenght) {
@@ -42,18 +45,18 @@ int *get_fully_random_array(int lenght) {
 
 
 int main() {
-    int lenght = 20;
+    int length = 20;
 
-    int *array = get_fully_random_array(lenght);
-    print_array(array, lenght);
+    int *array = get_fully_random_array(length);
+    print_array(array, length);
     // creating copy to maintain consistent data for test
-    int* temp_arr = new int[lenght];
+    int* temp_arr = new int[length];
 
     cout << "Insert sort: " << endl;
-    std::copy(array, array+lenght, temp_arr);
-    print_array(insert_sort(array, lenght), lenght);
+    std::copy(array, array+length, temp_arr);
+    print_array(insert_sort(array, length), length);
 
     cout << "Selection sort: " << endl;
-    std::copy(array, array+lenght, temp_arr);
-    print_array(selection_sort(array, lenght), lenght);
+    std::copy(array, array+length, temp_arr);
+    print_array(selection_sort(array, length), length);
 }
