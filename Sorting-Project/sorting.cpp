@@ -59,4 +59,8 @@ int main() {
     cout << "Selection sort: " << endl;
     std::copy(array, array+length, temp_arr);
     print_array(selection_sort(array, length), length);
+
+    cout << "Selection sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(bubble_sort(array, length), length);
 }
