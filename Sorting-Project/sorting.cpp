@@ -8,6 +8,7 @@
 #include "insert_sort.h"
 #include "selection_sort.h"
 #include "bubble_sort.h"
+#include "quick_sort.h"
 
 using namespace std;
 
@@ -50,6 +51,8 @@ int main() {
     // creating copy to maintain consistent data for test
     int* temp_arr = new int[length];
 
+
+    //Part I
     cout << "Insert sort: " << endl;
     std::copy(array, array+length, temp_arr);
     print_array(insert_sort(array, length), length);
@@ -61,4 +64,9 @@ int main() {
     cout << "Bubble sort: " << endl;
     std::copy(array, array+length, temp_arr);
     print_array(bubble_sort(array, length), length);
+
+    //Part II
+    cout << "Quick sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(quick_sort(array, length), length);
 }
