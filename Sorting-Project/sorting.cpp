@@ -42,5 +42,11 @@ int *get_fully_random_array(int lenght) {
 
 
 int main() {
+    int lenght = 20;
+
+    int *array = get_fully_random_array(lenght);
+    print_array(array, lenght);
+    // creating copy to maintain consistent data for test
+    int* temp_arr = new int[lenght];
 
 }
