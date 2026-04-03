@@ -7,6 +7,7 @@
 
 #include "insert_sort.h"
 #include "selection_sort.h"
+#include "bubble_sort.h"
 
 using namespace std;
 
@@ -28,15 +29,12 @@ int *get_fully_random_array(int lenght) {
 
     for (int i = 1; i <= lenght; i++) {
         int x = urand(gen);
-        cout << x << ": ";
+
         while (array[x] > 0) {
             x = (x+1)%(lenght);
         }
 
         array[x] = i;
-
-        print_array(array, lenght);
-        cout << " : " << x << endl;
     }
 
 
@@ -60,7 +58,7 @@ int main() {
     std::copy(array, array+length, temp_arr);
     print_array(selection_sort(array, length), length);
 
-    cout << "Selection sort: " << endl;
+    cout << "Bubble sort: " << endl;
     std::copy(array, array+length, temp_arr);
     print_array(bubble_sort(array, length), length);
 }
