@@ -9,8 +9,6 @@
 #include "Points.h"
 #include "GridMap.cpp"
 
-
-
 using namespace std;
 
 void establish_nearest(POINT p, POINT goal, double *min_dist, POINT* near_point) {
