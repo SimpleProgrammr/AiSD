@@ -9,8 +9,8 @@ inline int* selection_sort(int* data, unsigned int length) {
     for (int i = 0; i < length; i++) {
         int min_index = i;
 
-        for (int j = i + 1; j < length; j++) {
-            if (data[j] < data[i]) {
+        for (int j = i; j < length; j++) {
+            if (data[min_index] > data[j]) {
                 min_index = j;
             }
         }
