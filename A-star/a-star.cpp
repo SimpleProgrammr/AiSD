@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -19,21 +20,22 @@ void establish_nearest(POINT p, POINT goal, double *min_dist, POINT* near_point)
 }
 
 void establish_next_move(const list<POINT>& used_points, const GridMap &grid, const POINT goal,
-    const unsigned char free_space_value, double *min_dist, POINT* near_point, void (*establishing_func)(POINT,POINT,double*, POINT*)) {
+    const unsigned char free_space_value, POINT* near_point, void (*establishing_func)(POINT,POINT,double*, POINT*)) {
 
+    double min_dist = INFINITY;
     long index = 0;
     for (const POINT &p : used_points) {
         if (p.x + 1 < grid.getHeight() && grid[p.x + 1][p.y] == free_space_value) {
-            establishing_func(POINT{p.x+1,p.y}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x+1,p.y}, goal, &min_dist, near_point);
         };
         if (p.y + 1 < grid.getWidth() && grid[p.x][p.y + 1] == free_space_value) {
-            establishing_func(POINT{p.x,p.y+1}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x,p.y+1}, goal, &min_dist, near_point);
         }
         if (p.x - 1 >= 0 && grid[p.x - 1][p.y] == free_space_value) {
-            establishing_func(POINT{p.x-1,p.y}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x-1,p.y}, goal, &min_dist, near_point);
         }
         if (p.y - 1 >= 0 && grid[p.x][p.y - 1] == free_space_value) {
-            establishing_func(POINT{p.x,p.y-1}, goal, min_dist, near_point);
+            establishing_func(POINT{p.x,p.y-1}, goal, &min_dist, near_point);
         }
         index++;
     }
@@ -115,10 +117,9 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
 
     while ( !(forwardUsedPoints.front().isEqual(goal))) {
 
-        double min_distance = numeric_limits<double>::max();
         POINT near_point = POINT{-1,-1};
 
-        establish_next_move(forwardUsedPoints, grid, goal, free_space_value, &min_distance, &near_point, establish_nearest);
+        establish_next_move(forwardUsedPoints, grid, goal, free_space_value, &near_point, establish_nearest);
 
         if (near_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
@@ -131,10 +132,9 @@ list<POINT> A_star_on_grid(const GridMap &grid, const POINT start, const POINT g
     grid[goal.x][goal.y] = trace_value;
     while ( !(trace_list.front().isEqual(start))) {
 
-        double min_distance = numeric_limits<double>::max();
         auto next_point = POINT{-1,-1};
 
-        establish_next_move(trace_list, grid, start, trace_value, &min_distance, &next_point , establish_nearest);
+        establish_next_move(trace_list, grid, start, trace_value, &next_point , establish_nearest);
 
         if (next_point.isEqual(POINT{-1,-1})) {
             return list<POINT>{POINT{-1,-1}}; //Impossible to solve indicator
@@ -208,7 +208,7 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
     }
 
     list<POINT> trace;
-    double trace_len = 0;
+    long trace_len = 0;
 
     long long avg_runTime = 0;
     int error_count = 0;
@@ -216,7 +216,7 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
     POINT start = POINT{0,0}, goal = POINT{height-1,width-1};
     double line_dist = height+width;
 
-    for (int i = 0; i < obstacles_reshuffles; i++) {
+    for (int i = 0; i < obstacles_reshuffles && error_count < 10; i++) {
         GridMap grid = GridMap(height, width, 0);
 
 
@@ -236,29 +236,30 @@ void speed_test_random_obstacles(long height, long width, int obstacles_reshuffl
 
             if (trace.front() == POINT{-1,-1}) {
                 i--;
+                error_count++;
                 break;
             }
             clear_traces(grid, 0, 31);
+            trace_len += trace.size()+1;
 
-            trace_len += trace.size();
-            duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-            cout << duration << endl;
+            auto t = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+            duration += t;
+            cout << t << endl;
         }
-
-
-
 
         avg_runTime += duration;
     }
-    sf << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << trace_len/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
-    cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << trace_len/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
-
+    if (error_count >= 10) {
+        cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << -1 << "\t" << -1 << endl;
+    }
+    else {
+        sf << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << static_cast<double>(trace_len)/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
+        cout << height << "\t" << width << "\t" << obstacles_rate << "\t" << line_dist << "\t" << static_cast<double>(trace_len)/repeats/obstacles_reshuffles << "\t" << avg_runTime/repeats/obstacles_reshuffles << endl;
+    }
     sf.close();
 }
 
-
-int main() {
-
+void runTest1() { // Varying only size
     std::ofstream sf = std::ofstream("speedTestRandomObstacles.txt");
     if (!sf.is_open()) {
         std::cerr << "Unable to open file" << std::endl;
@@ -267,12 +268,29 @@ int main() {
     sf << "Height\tWidth\tObstacles\tDistance_In_Line\tCalculated_Distance\tTime[us]" << std::endl;
     sf.close();
 
-     for (long size = 10; size < 4000; size+=10) {
-         speed_test_random_obstacles(size,size,  1, 10, 0.1);
+    for (long size = 50; size <= 1500; size+=25) {
+        speed_test_random_obstacles(size,size,  1, 10, 0.1);
     }
-    return 1;
+}
 
+void runTest2() { // Varying amount of obstacles in different sizes
+    ofstream sf = std::ofstream("speedTestObstaclesRate.txt");
+    if (!sf.is_open()) {
+        std::cerr << "Unable to open file" << std::endl;
+        throw std::runtime_error("Unable to open file");
+    }
+    sf << "Height\tWidth\tObstacles\tDistance_In_Line\tCalculated_Distance\tTime[us]" << std::endl;
+    sf.close();
 
+    for (long size = 50; size < 1000; size+=50) {
+        for (int i = 0; i <= 30; i++) {
+            double obr = 0.1 + i * 0.01;
+            speed_test_random_obstacles(size, size, 1, 10, obr, "speedTestObstaclesRate.txt");
+        }
+    }
+}
+
+int manualRun() {
     const int height = 10;
     const int width = 80;
 
@@ -302,6 +320,19 @@ int main() {
     }
 
     print_grid(grid, goal, start);
+
+    return 1;
+}
+
+
+int main() {
+
+    //Choose an option
+    runTest1();
+    // runTest2();
+    // manualRun();
+
+    return 1;
 
 }
 
