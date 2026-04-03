@@ -52,4 +52,8 @@ int main() {
     cout << "Insert sort: " << endl;
     std::copy(array, array+lenght, temp_arr);
     print_array(insert_sort(array, lenght), lenght);
+
+    cout << "Selection sort: " << endl;
+    std::copy(array, array+lenght, temp_arr);
+    print_array(selection_sort(array, lenght), lenght);
 }
