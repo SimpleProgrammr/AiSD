@@ -15,6 +15,7 @@
 #include "heap_sort.h"
 #include "stalin_sort.h"
 #include "thanos_sort.h"
+#include "miracle_sort.h"
 
 using namespace std;
 
