@@ -72,7 +72,7 @@ int main() {
 
     cout << "Bubble sort: " << endl;
     std::copy(array, array+length, temp_arr);
-    print_array(bubble_sort(array, length), length);
+    print_array(bubble_sort(temp_arr, length), length);
 
     //Part II
     cout << "Quick sort: " << endl;
