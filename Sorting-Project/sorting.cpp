@@ -13,8 +13,8 @@
 using namespace std;
 
 
-void print_array(int *array, int lenght) {
-    for (int i = 0; i < lenght; i++) {
+void print_array(const int *array, int length) {
+    for (int i = 0; i < length; i++) {
         cout << array[i] << " ";
     }
     cout << endl;
