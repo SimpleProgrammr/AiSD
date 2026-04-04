@@ -20,6 +20,15 @@ void print_array(int *array, int lenght) {
     cout << endl;
 }
 
+
+void print_list(list<int> list) {
+    ;
+    for (auto it = list.begin(); it != list.end(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+}
+
 int *get_fully_random_array(int length) {
     auto array = new int[length];
     memset(array, 0, length * sizeof(int));
