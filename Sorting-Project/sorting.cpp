@@ -77,5 +77,19 @@ int main() {
     //Part II
     cout << "Quick sort: " << endl;
     std::copy(array, array+length, temp_arr);
-    print_array(quick_sort(array, length), length);
+    print_array(quick_sort(temp_arr,0, length-1) , length);
+
+    cout << "Shell sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(shell_sort(temp_arr, length), length);
+
+    cout << "Heap sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(heap_sort(temp_arr, length), length);
+
+    //Part III
+    list<int> list = array_to_list(array, length);
+
+    cout << "Stalin sort: " << endl;
+    print_list(stalin_sort(list));
 }
