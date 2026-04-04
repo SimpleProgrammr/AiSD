@@ -1,6 +1,7 @@
 //
 // Created by Elmo on 31/03/2026.
 //
+
 #include <cstring>
 #include <iostream>
 #include <list>
@@ -13,6 +14,7 @@
 #include "shell_sort.h"
 #include "heap_sort.h"
 #include "stalin_sort.h"
+#include "thanos_sort.h"
 
 using namespace std;
 
@@ -66,7 +68,7 @@ std::list<int> array_to_list(const int * array, unsigned int length) {
 
 
 int main() {
-    int length = 20;
+    int length = 50;
 
     int *array = get_fully_random_array(length);
     print_array(array, length);
@@ -106,4 +108,9 @@ int main() {
 
     cout << "Stalin sort: " << endl;
     print_list(stalin_sort(list));
+
+    cout << "Thanos sort: " << endl;
+    for (int i = 1; i <= 100; i++)
+        print_list(thanos_sort(list));
+
 }
