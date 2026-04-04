@@ -42,8 +42,8 @@ int *get_fully_random_array(int lenght) {
     return array;
 }
 
-std::list<int> array_to_list(int * array, unsigned int length) {
-    list<int> list = {};
+std::list<int> array_to_list(const int * array, unsigned int length) {
+    list<int> list;
     for (unsigned int i = 0; i < length; i++) {
         list.push_back(array[i]);
     }
