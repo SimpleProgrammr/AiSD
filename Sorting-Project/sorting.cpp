@@ -20,19 +20,19 @@ void print_array(int *array, int lenght) {
     cout << endl;
 }
 
-int *get_fully_random_array(int lenght) {
-    auto array = new int[lenght];
-    memset(array, 0, lenght * sizeof(int));
+int *get_fully_random_array(int length) {
+    auto array = new int[length];
+    memset(array, 0, length * sizeof(int));
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> urand(0, lenght-1);
+    std::uniform_int_distribution<> uni_rand(0, length-1);
 
-    for (int i = 1; i <= lenght; i++) {
-        int x = urand(gen);
+    for (int i = 1; i <= length; i++) {
+        int x = uni_rand(gen);
 
         while (array[x] > 0) {
-            x = (x+1)%(lenght);
+            x = (x+1)%(length);
         }
 
         array[x] = i;
