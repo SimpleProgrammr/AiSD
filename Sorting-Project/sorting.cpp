@@ -16,6 +16,7 @@
 #include "stalin_sort.h"
 #include "thanos_sort.h"
 #include "miracle_sort.h"
+#include "luck_sort.h"
 
 using namespace std;
 
@@ -113,5 +114,9 @@ int main() {
     cout << "Thanos sort: " << endl;
     for (int i = 1; i <= 100; i++)
         print_list(thanos_sort(list));
+
+    cout << "Luck sort: " << endl;
+    int * tmp = new int[9] {1,3,2,4,6,5,7,8,9};
+    print_array(luck_sort(tmp, 9), 9);
 
 }
