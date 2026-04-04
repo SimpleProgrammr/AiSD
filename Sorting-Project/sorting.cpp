@@ -3,12 +3,16 @@
 //
 #include <cstring>
 #include <iostream>
+#include <list>
 #include <random>
 
 #include "insert_sort.h"
 #include "selection_sort.h"
 #include "bubble_sort.h"
 #include "quick_sort.h"
+#include "shell_sort.h"
+#include "heap_sort.h"
+#include "stalin_sort.h"
 
 using namespace std;
 
