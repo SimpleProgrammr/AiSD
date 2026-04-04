@@ -57,6 +57,7 @@ int main() {
 
     int *array = get_fully_random_array(length);
     print_array(array, length);
+
     // creating copy to maintain consistent data for test
     int* temp_arr = new int[length];
 
@@ -64,7 +65,7 @@ int main() {
     //Part I
     cout << "Insert sort: " << endl;
     std::copy(array, array+length, temp_arr);
-    print_array(insert_sort(array, length), length);
+    print_array(insert_sort(temp_arr, length), length);
 
     cout << "Selection sort: " << endl;
     std::copy(array, array+length, temp_arr);
