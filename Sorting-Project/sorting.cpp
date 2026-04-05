@@ -116,7 +116,7 @@ int main() {
         print_list(thanos_sort(list));
 
     cout << "Luck sort: " << endl;
-    int * tmp = new int[9] {1,3,2,4,6,5,7,8,9};
-    print_array(luck_sort(tmp, 9), 9);
+    int * tmp = new int[5] {1,3,2,4,5};
+    print_array(luck_sort(tmp, 5), 5);
 
 }
