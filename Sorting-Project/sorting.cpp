@@ -3,9 +3,12 @@
 //
 
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <random>
+#include <thread>
+#include <utility>
 
 #include "insert_sort.h"
 #include "selection_sort.h"
@@ -69,7 +72,7 @@ std::list<int> array_to_list(const int * array, unsigned int length) {
 }
 
 
-unsigned long long speedtest(int* data, unsigned int len, int *algorithm(int*,unsigned int)) {
+long long speedtest(int* data, unsigned int len, int *algorithm(int*,unsigned int)) {
     int *tmp_data = new int[len];
     long long duration = 0;
 
@@ -174,50 +177,96 @@ void test_run() {
 }
 
 int main() {
+    const auto processor_count = std::thread::hardware_concurrency();
+    int START = 10, END = 100000;
+
+    // Speed test part
+    ofstream sc1("Scenario1-full-rand.txt");
+    if (!sc1.is_open()) {
+        cerr << "Unable to open file(Scenario 1)" << endl;
+        return 1;
+    }
+
+    sc1 << "Data_size\tInsert_sort\tSelection_sort\tBubble_sort\tQuick_sort\tShell_sort\tHeap_sort\tStalin_sort\tThanos_sort" << endl;
+
+    for (int length = START; length <= END;) {
+        cout << length << " / " << END << " (" << (static_cast<double>(length) / END * 100) << "%)" << "\n";
+
+        int* array = get_fully_random_array(length);
+
+        long long ins = 0, sel = 0, bub = 0, qui = 0, she = 0, hea = 0, sta = 0, tha = 0;
+
+#pragma omp parallel num_threads(processor_count-1)
+        {
+#pragma omp sections
+            {
+                //Part I
+#pragma omp section
+                {
+                    ins = speedtest(array, length, &insert_sort);
+                    cout << "Insert sort, " ;
+                }
+#pragma omp section
+                {
+                    sel = speedtest(array, length, &selection_sort);
+                    cout << "Selection sort, " ;
+                }
+#pragma omp section
+                {
+                    bub = speedtest(array, length, &bubble_sort);
+                    cout << "Bubble sort, " ;
+                }
+                //Part II
+#pragma omp section
+                {
+                    qui = speedtest(array, length, &quick_sort);
+                    cout << "Quick sort, " ;
+                }
+#pragma omp section
+                {
+                    she = speedtest(array, length, &shell_sort);
+                    cout << "Shell sort, " ;
+                }
+#pragma omp section
+                {
+                    hea = speedtest(array, length, &heap_sort);
+                    cout << "Heap sort, " ;
+                }
+                //Part III
+#pragma omp section
+                {
+                    list<int> data = array_to_list(array, length);
+                    sta = speedtest(data, &stalin_sort);
+                    cout << "Stalin sort, " ;
+                    tha = speedtest(data, &thanos_sort);
+                    cout << "Thanos sort, " ;
+
+                }
+            }
+        }
+
+        sc1 << length << "\t"
+            << ins << "\t"
+            << sel << "\t"
+            << bub << "\t"
+            << qui << "\t"
+            << she << "\t"
+            << hea << "\t"
+            << sta << "\t"
+            << tha << "\t"
+            << endl;
+
+        delete[] array;
+        length += static_cast<int>(pow(10, static_cast<int>(log10(length))));
+    }
+
+    sc1.close();
 
 
-    // creating copy to maintain consistent data for test
-    int* temp_arr = new int[length];
+    //Scenario II: Descending sorted data
+    //Scenario III: Ascending sorted data
+    //Scenario IV: 10% of data flipped with neighbor
+    //Scenario V: 10% is randomized
 
-
-    //Part I
-    cout << "Insert sort: " << endl;
-    std::copy(array, array+length, temp_arr);
-    print_array(insert_sort(temp_arr, length), length);
-
-    cout << "Selection sort: " << endl;
-    std::copy(array, array+length, temp_arr);
-    print_array(selection_sort(temp_arr, length), length);
-
-    cout << "Bubble sort: " << endl;
-    std::copy(array, array+length, temp_arr);
-    print_array(bubble_sort(temp_arr, length), length);
-
-    //Part II
-    cout << "Quick sort: " << endl;
-    std::copy(array, array+length, temp_arr);
-    print_array(quick_sort(temp_arr,0, length-1) , length);
-
-    cout << "Shell sort: " << endl;
-    std::copy(array, array+length, temp_arr);
-    print_array(shell_sort(temp_arr, length), length);
-
-    cout << "Heap sort: " << endl;
-    std::copy(array, array+length, temp_arr);
-    print_array(heap_sort(temp_arr, length), length);
-
-    //Part III
-    list<int> list = array_to_list(array, length);
-
-    cout << "Stalin sort: " << endl;
-    print_list(stalin_sort(list));
-
-    cout << "Thanos sort: " << endl;
-    for (int i = 1; i <= 100; i++)
-        print_list(thanos_sort(list));
-
-    cout << "Luck sort: " << endl;
-    int * tmp = new int[5] {1,3,2,4,5};
-    print_array(luck_sort(tmp, 5), 5);
-
+    return 0;
 }
