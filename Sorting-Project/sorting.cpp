@@ -94,11 +94,58 @@ unsigned long long speedtest(list<int> data, int *algorithm(list<int>)) {
     return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 }
 
-int main() {
-    int length = 50;
+void test_run() {
+    int length = 5;
 
     int *array = get_fully_random_array(length);
     print_array(array, length);
+
+    // creating copy to maintain consistent data for test
+    int* temp_arr = new int[length];
+
+
+    //Part I
+    cout << "Insert sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(insert_sort(temp_arr, length), length);
+
+    cout << "Selection sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(selection_sort(temp_arr, length), length);
+
+    cout << "Bubble sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(bubble_sort(temp_arr, length), length);
+
+    //Part II
+    cout << "Quick sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(quick_sort(temp_arr,0, length-1) , length);
+
+    cout << "Shell sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(shell_sort(temp_arr, length), length);
+
+    cout << "Heap sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(heap_sort(temp_arr, length), length);
+
+    //Part III
+    list<int> data = array_to_list(array, length);
+
+    cout << "Stalin sort: " << endl;
+    print_list(stalin_sort(data));
+
+    cout << "Thanos sort: " << endl;
+    print_list(thanos_sort(data));
+
+    cout << "Luck sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(luck_sort(temp_arr, length), length);
+}
+
+int main() {
+
 
     // creating copy to maintain consistent data for test
     int* temp_arr = new int[length];
