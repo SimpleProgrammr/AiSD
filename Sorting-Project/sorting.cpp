@@ -196,7 +196,7 @@ void test_run() {
 
 int main() {
     const auto processor_count = std::thread::hardware_concurrency();
-    int START = 10, END = 100000;
+    int START = 1000, END = 100000;
 
     // Speed test part
 
