@@ -83,6 +83,20 @@ unsigned long long speedtest(int* data, unsigned int len, int *algorithm(int*,un
     return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 }
 
+unsigned long long speedtest(int* data, int len, int *algorithm(int*, int, int)) {
+    int *tmp_data = new int[len];
+    std::copy(data, data+len, tmp_data);
+
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    algorithm(tmp_data,0, len);
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    free(tmp_data);
+
+    return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+}
+
 unsigned long long speedtest(list<int> data, int *algorithm(list<int>)) {
 
     auto start_time = std::chrono::high_resolution_clock::now();
