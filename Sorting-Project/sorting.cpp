@@ -69,6 +69,31 @@ std::list<int> array_to_list(const int * array, unsigned int length) {
 }
 
 
+unsigned long long speedtest(int* data, unsigned int len, int *algorithm(int*,unsigned int)) {
+    int *tmp_data = new int[len];
+    std::copy(data, data+len, tmp_data);
+
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    algorithm(tmp_data, len);
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    free(tmp_data);
+
+    return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+}
+
+unsigned long long speedtest(list<int> data, int *algorithm(list<int>)) {
+
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    algorithm(data);
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+
+    return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+}
+
 int main() {
     int length = 50;
 
