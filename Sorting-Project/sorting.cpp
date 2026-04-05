@@ -233,7 +233,9 @@ int main() {
                 }
 #pragma omp section
                 {
-                    bub = speedtest(array, length, &bubble_sort);
+                    if (length <= 40000)
+                        bub = speedtest(array, length, &bubble_sort);
+                    else bub = -1;
                     cout << "Bubble sort, " ;
                 }
                 //Part II
@@ -264,12 +266,15 @@ int main() {
                 }
             }
         }
+        cout << endl;
 
         sc1 << length << "\t"
             << ins << "\t"
-            << sel << "\t"
-            << bub << "\t"
-            << qui << "\t"
+            << sel << "\t";
+        if (bub != -1)
+            sc1<< bub;
+        sc1 << "\t";
+        sc1 << qui << "\t"
             << she << "\t"
             << hea << "\t"
             << sta << "\t"
@@ -277,7 +282,8 @@ int main() {
             << endl;
 
         delete[] array;
-        length += static_cast<int>(pow(10, static_cast<int>(log10(length))));
+        //length += static_cast<int>(pow(10, static_cast<int>(log10(length))));
+        length += 1000;
     }
 
     sc1.close();
