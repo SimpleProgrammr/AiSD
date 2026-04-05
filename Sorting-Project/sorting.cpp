@@ -71,41 +71,56 @@ std::list<int> array_to_list(const int * array, unsigned int length) {
 
 unsigned long long speedtest(int* data, unsigned int len, int *algorithm(int*,unsigned int)) {
     int *tmp_data = new int[len];
-    std::copy(data, data+len, tmp_data);
+    long long duration = 0;
 
-    auto start_time = std::chrono::high_resolution_clock::now();
+    int repeats = 3;
+    for (unsigned int i = 0; i < repeats; i++) {
+        std::copy(data, data+len, tmp_data);
 
-    algorithm(tmp_data, len);
+        auto start_time = std::chrono::high_resolution_clock::now();
 
-    auto end_time = std::chrono::high_resolution_clock::now();
-    free(tmp_data);
+        algorithm(tmp_data, len);
 
-    return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+        auto end_time = std::chrono::high_resolution_clock::now();
+
+        duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+    }
+    return duration/repeats;
 }
 
-unsigned long long speedtest(int* data, int len, int *algorithm(int*, int, int)) {
+long long speedtest(int* data, int len, int *algorithm(int*, int, int)) {
     int *tmp_data = new int[len];
-    std::copy(data, data+len, tmp_data);
+    long long duration = 0;
 
-    auto start_time = std::chrono::high_resolution_clock::now();
+    int repeats = 3;
+    for (unsigned int i = 0; i < repeats; i++) {
+        std::copy(data, data+len, tmp_data);
 
-    algorithm(tmp_data,0, len);
+        auto start_time = std::chrono::high_resolution_clock::now();
 
-    auto end_time = std::chrono::high_resolution_clock::now();
-    free(tmp_data);
+        algorithm(tmp_data, 0, len-1);
 
-    return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+        auto end_time = std::chrono::high_resolution_clock::now();
+
+        duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+    }
+    return duration/repeats;
 }
 
-unsigned long long speedtest(list<int> data, int *algorithm(list<int>)) {
+long long speedtest(list<int> data, list<int> algorithm(list<int>)) {
+    long long duration = 0;
+    int repeats = 3;
 
-    auto start_time = std::chrono::high_resolution_clock::now();
+    for (unsigned int i = 0; i < repeats; i++) {
+        auto start_time = std::chrono::high_resolution_clock::now();
 
-    algorithm(data);
+        algorithm(std::move(data));
 
-    auto end_time = std::chrono::high_resolution_clock::now();
+        auto end_time = std::chrono::high_resolution_clock::now();
 
-    return std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+        duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+    }
+    return duration;
 }
 
 void test_run() {
