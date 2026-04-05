@@ -18,6 +18,7 @@ int pivot(int* data, int low, int high) {
     return i;
 }
 
+//O(n^2)
 inline int * quick_sort(int * data, int low, int high) {
     if (low < high) {
         int pi = pivot(data, low, high);

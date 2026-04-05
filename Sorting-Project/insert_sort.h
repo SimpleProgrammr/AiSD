@@ -1,5 +1,6 @@
 #pragma once
 
+//O(n^2)
 inline int* insert_sort(int* data, const unsigned int length) {
     for (int i = 1; i < length; i++) {
         int key = data[i];

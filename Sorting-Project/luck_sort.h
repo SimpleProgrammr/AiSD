@@ -4,6 +4,8 @@
 
 #pragma once
 
+
+//O(n!)
 inline int * shuffle_list(int * data, unsigned int length) {
 
     std::random_device rd;

@@ -23,6 +23,7 @@ inline void snap(std::list<int> &list, unsigned int size ) {
     list.remove(-1);
 }
 
+//O(nlog(n))
 inline std::list<int> thanos_sort(std::list<int> data) {
 
     unsigned int size = data.size();

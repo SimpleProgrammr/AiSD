@@ -4,6 +4,7 @@
 
 #pragma once
 
+//O(n^2)
 inline int * bubble_sort(int * data, unsigned int length) {
     bool sorted;
 

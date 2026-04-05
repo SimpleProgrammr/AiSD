@@ -35,6 +35,7 @@ inline int * heapify(int * data, unsigned int length, unsigned int index_largest
     return data;
 }
 
+//O(n*log(n))
 inline int * heap_sort(int* data, unsigned int length) {
 
     for (int i = length / 2 - 1; i >= 0; i--)

@@ -4,6 +4,7 @@
 #pragma once
 #include <list>
 
+//O(n)
 inline std::list<int> stalin_sort(std::list<int> list) {
     auto prev = list.begin();
     auto present = ++list.begin();

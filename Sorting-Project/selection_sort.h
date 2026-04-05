@@ -5,6 +5,7 @@
 #pragma once
 #include <filesystem>
 
+//O(n^2)
 inline int* selection_sort(int* data, unsigned int length) {
     for (int i = 0; i < length; i++) {
         int min_index = i;

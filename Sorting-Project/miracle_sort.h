@@ -4,6 +4,8 @@
 #pragma once
 
 #include <list>
+
+//O(inf)
 std::list<int> miracle_sort(std::list<int> data) {
     bool isSorted;
     do {
