@@ -199,6 +199,8 @@ int main() {
     int START = 10, END = 100000;
 
     // Speed test part
+
+    //Scenario I: Fully scrambled data
     ofstream sc1("Scenario1-full-rand.txt");
     if (!sc1.is_open()) {
         cerr << "Unable to open file(Scenario 1)" << endl;
