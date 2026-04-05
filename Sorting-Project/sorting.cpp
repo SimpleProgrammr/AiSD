@@ -62,6 +62,24 @@ int *get_fully_random_array(int length) {
     return array;
 }
 
+int * get_descending_array(int length) {
+    auto array = new int[length];
+    memset(array, 0, length * sizeof(int));
+    for (int i = 1; i <= length; i--) {
+        array[i-1] = length - i;
+    }
+    return array;
+}
+
+int * get_ascending_array(int length) {
+    auto array = new int[length];
+    memset(array, 0, length * sizeof(int));
+    for (int i = 1; i <= length; i--) {
+        array[i-1] = i;
+    }
+    return array;
+}
+
 std::list<int> array_to_list(const int * array, unsigned int length) {
     list<int> list;
     for (unsigned int i = 0; i < length; i++) {
