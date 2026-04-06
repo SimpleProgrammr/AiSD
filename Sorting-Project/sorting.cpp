@@ -80,6 +80,43 @@ int * get_ascending_array(int length) {
     return array;
 }
 
+int * get_neighbours_flipped(int length) {
+    int * arr = get_ascending_array(length);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> uni_rand(0, length-1-1);
+
+    int to_flip = length/10/2;
+
+    while (to_flip>0) {
+        const int x = uni_rand(gen);
+        std::swap(arr[x], arr[x+1]);
+        to_flip--;
+    }
+
+    return arr;
+}
+
+int * get_little_scrambled_array(int length) {
+    int * arr = get_ascending_array(length);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> uni_rand(0, length-1);
+
+    int to_flip = length/10/2;
+
+    while (to_flip>0) {
+        int x = uni_rand(gen);
+        int y = uni_rand(gen);
+        std::swap(arr[x], arr[y]);
+        to_flip--;
+    }
+
+    return arr;
+}
+
 std::list<int> array_to_list(const int * array, unsigned int length) {
     list<int> list;
     for (unsigned int i = 0; i < length; i++) {
