@@ -238,20 +238,17 @@ void test_run() {
     print_array(luck_sort(temp_arr, length), length);
 }
 
-int main() {
+//Scenario I: Fully scrambled data
+void scenario_1_run() {
     const auto processor_count = std::thread::hardware_concurrency();
-    int START = 1000, END = 100000;
 
-    // Speed test part
-
-    //Scenario I: Fully scrambled data
-    ofstream sc1("Scenario1-full-rand.txt");
-    if (!sc1.is_open()) {
+    ofstream fout("Scenario1-full-rand.txt");
+    if (!fout.is_open()) {
         cerr << "Unable to open file(Scenario 1)" << endl;
-        return 1;
+        throw std::ios_base::failure("Unable to open file(Scenario 1)");
     }
 
-    sc1 << "Data_size\tInsert_sort\tSelection_sort\tBubble_sort\tQuick_sort\tShell_sort\tHeap_sort\tStalin_sort\tThanos_sort" << endl;
+    fout << "Data_size\tInsert_sort\tSelection_sort\tBubble_sort\tQuick_sort\tShell_sort\tHeap_sort\tStalin_sort\tThanos_sort" << endl;
 
     for (int length = START; length <= END;) {
         cout << length << " / " << END << " (" << (static_cast<double>(length) / END * 100) << "%)" << "\n";
@@ -277,7 +274,7 @@ int main() {
                 }
 #pragma omp section
                 {
-                    if (length <= 40000)
+                    if (length <= END/2)
                         bub = speedtest(array, length, &bubble_sort);
                     else bub = -1;
                     cout << "Bubble sort, " ;
@@ -312,13 +309,13 @@ int main() {
         }
         cout << endl;
 
-        sc1 << length << "\t"
+        fout << length << "\t"
             << ins << "\t"
             << sel << "\t";
         if (bub != -1)
-            sc1<< bub;
-        sc1 << "\t";
-        sc1 << qui << "\t"
+            fout<< bub;
+        fout << "\t";
+        fout << qui << "\t"
             << she << "\t"
             << hea << "\t"
             << sta << "\t"
@@ -330,13 +327,230 @@ int main() {
         length += 1000;
     }
 
-    sc1.close();
+    fout.close();
+}
 
+//Scenario II: Descending sorted data
+void scenario_2_run() {
+    const auto processor_count = std::thread::hardware_concurrency();
+    ofstream fout("Scenario2-desc_order.txt");
+    if (!fout.is_open()) {
+        cerr << "Unable to open file(Scenario 2)" << endl;
+        throw std::ios_base::failure("Unable to open file(Scenario 2)");
+    }
 
-    //Scenario II: Descending sorted data
-    //Scenario III: Ascending sorted data
-    //Scenario IV: 10% of data flipped with neighbor
-    //Scenario V: 10% is randomized
+    fout << "Data_size\tInsert_sort\tSelection_sort\tBubble_sort\tQuick_sort\tShell_sort\tHeap_sort\tStalin_sort\tThanos_sort" << endl;
+
+    for (int length = START; length <= END;) {
+        cout << length << " / " << END << " (" << (static_cast<double>(length) / END * 100) << "%)" << "\n";
+
+        int* array = get_descending_array(length);
+
+        long long ins = 0, sel = 0, bub = 0, qui = 0, she = 0, hea = 0, sta = 0, tha = 0;
+
+#pragma omp parallel num_threads(processor_count-1)
+        {
+#pragma omp sections
+            {
+                //Part I
+#pragma omp section
+                {
+                    ins = speedtest(array, length, &insert_sort);
+                    cout << "Insert sort, " ;
+                }
+#pragma omp section
+                {
+                    sel = speedtest(array, length, &selection_sort);
+                    cout << "Selection sort, " ;
+                }
+#pragma omp section
+                {
+                    if (length <= END/2)
+                        bub = speedtest(array, length, &bubble_sort);
+                    else bub = -1;
+                    cout << "Bubble sort, " ;
+                }
+                //Part II
+#pragma omp section
+                {
+                    //limiting quicksort due to stack overflow
+                    if (length <= END/2)
+                        qui = speedtest(array, length, &quick_sort);
+                    else qui = -1;
+
+                    cout << "Quick sort, " ;
+                }
+#pragma omp section
+                {
+                    she = speedtest(array, length, &shell_sort);
+                    cout << "Shell sort, " ;
+                }
+#pragma omp section
+                {
+                    hea = speedtest(array, length, &heap_sort);
+                    cout << "Heap sort, " ;
+                }
+                //Part III
+#pragma omp section
+                {
+                    list<int> data = array_to_list(array, length);
+                    sta = speedtest(data, &stalin_sort);
+                    cout << "Stalin sort, " ;
+                    tha = speedtest(data, &thanos_sort);
+                    cout << "Thanos sort, " ;
+
+                }
+            }
+        }
+        cout << endl;
+
+        fout << length << "\t"
+            << ins << "\t"
+            << sel << "\t";
+        if (bub != -1)
+            fout<< bub;
+        fout << "\t";
+        if (qui != -1)
+            fout<< qui;
+        fout << "\t"
+            << she << "\t"
+            << hea << "\t"
+            << sta << "\t"
+            << tha << "\t"
+            << endl;
+
+        delete[] array;
+        //length += static_cast<int>(pow(10, static_cast<int>(log10(length))));
+        length += 1000;
+    }
+
+    fout.close();
+}
+
+//Scenario III: Ascending sorted data
+void scenario_3_run() {
+    const auto processor_count = std::thread::hardware_concurrency();
+    ofstream fout("Scenario3-desc_order.txt");
+    if (!fout.is_open()) {
+        cerr << "Unable to open file(Scenario 3)" << endl;
+        throw std::ios_base::failure("Unable to open file(Scenario 3)");
+    }
+
+    fout << "Data_size\tInsert_sort\tSelection_sort\tBubble_sort\tQuick_sort\tShell_sort\tHeap_sort\tStalin_sort\tThanos_sort" << endl;
+
+    for (int length = START; length <= END;) {
+        cout << length << " / " << END << " (" << (static_cast<double>(length) / END * 100) << "%)" << "\n";
+
+        int* array = get_ascending_array(length);
+
+        long long ins = 0, sel = 0, bub = 0, qui = 0, she = 0, hea = 0, sta = 0, tha = 0;
+
+#pragma omp parallel num_threads(processor_count-1)
+        {
+#pragma omp sections
+            {
+                //Part I
+#pragma omp section
+                {
+                    ins = speedtest(array, length, &insert_sort);
+                    cout << "Insert sort, " ;
+                }
+#pragma omp section
+                {
+                    sel = speedtest(array, length, &selection_sort);
+                    cout << "Selection sort, " ;
+                }
+#pragma omp section
+                {
+                    if (length <= END/2)
+                        bub = speedtest(array, length, &bubble_sort);
+                    else bub = -1;
+                    cout << "Bubble sort, " ;
+                }
+                //Part II
+#pragma omp section
+                {
+                    qui = speedtest(array, length, &quick_sort);
+                    cout << "Quick sort, " ;
+                }
+#pragma omp section
+                {
+                    she = speedtest(array, length, &shell_sort);
+                    cout << "Shell sort, " ;
+                }
+#pragma omp section
+                {
+                    hea = speedtest(array, length, &heap_sort);
+                    cout << "Heap sort, " ;
+                }
+                //Part III
+#pragma omp section
+                {
+                    list<int> data = array_to_list(array, length);
+                    sta = speedtest(data, &stalin_sort);
+                    cout << "Stalin sort, " ;
+                    tha = speedtest(data, &thanos_sort);
+                    cout << "Thanos sort, " ;
+
+                }
+            }
+        }
+        cout << endl;
+
+        fout << length << "\t"
+            << ins << "\t"
+            << sel << "\t";
+        if (bub != -1)
+            fout<< bub;
+        fout << "\t";
+        fout << qui << "\t"
+            << she << "\t"
+            << hea << "\t"
+            << sta << "\t"
+            << tha << "\t"
+            << endl;
+
+        delete[] array;
+        //length += static_cast<int>(pow(10, static_cast<int>(log10(length))));
+        length += 1000;
+    }
+
+    fout.close();
+}
+
+//Scenario IV: 10% of data flipped with neighbor, rest is sorted
+void scenario_4_run();
+
+//Scenario V: 10% is randomized, rest is sorted
+void scenario_5_run();
+
+void full_run() {
+    const auto processor_count = std::thread::hardware_concurrency();
+    int START = 1000, END = 100000;
+
+    // Speed test part
+    //////////////////////////////////////////////////////////////////////////////////////
+    scenario_1_run();
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    scenario_2_run();
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    scenario_3_run();
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    scenario_4_run();
+
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    scenario_5_run();
+}
+
+int main() {
+    full_run();
 
     return 0;
 }
