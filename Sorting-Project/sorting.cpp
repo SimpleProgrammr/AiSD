@@ -185,6 +185,9 @@ long long speedtest(list<int> data, list<int> algorithm(list<int>)) {
     return duration;
 }
 
+
+// Run wrappers
+constexpr int START = 1000, END = 50000;
 void test_run() {
     int length = 5;
 
