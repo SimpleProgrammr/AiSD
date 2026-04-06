@@ -126,7 +126,7 @@ std::list<int> array_to_list(const int * array, unsigned int length) {
     return list;
 }
 
-
+//Speed testers
 long long speedtest(int* data, unsigned int len, int *algorithm(int*,unsigned int)) {
     int *tmp_data = new int[len];
     long long duration = 0;
@@ -143,6 +143,9 @@ long long speedtest(int* data, unsigned int len, int *algorithm(int*,unsigned in
 
         duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
     }
+
+    delete [] tmp_data;
+
     return duration/repeats;
 }
 
@@ -162,6 +165,7 @@ long long speedtest(int* data, int len, int *algorithm(int*, int, int)) {
 
         duration += std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
     }
+    delete [] tmp_data;
     return duration/repeats;
 }
 
