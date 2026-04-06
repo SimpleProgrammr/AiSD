@@ -65,7 +65,7 @@ int *get_fully_random_array(int length) {
 int * get_descending_array(int length) {
     auto array = new int[length];
     memset(array, 0, length * sizeof(int));
-    for (int i = 1; i <= length; i--) {
+    for (int i = 1; i <= length; i++) {
         array[i-1] = length - i;
     }
     return array;
@@ -74,7 +74,7 @@ int * get_descending_array(int length) {
 int * get_ascending_array(int length) {
     auto array = new int[length];
     memset(array, 0, length * sizeof(int));
-    for (int i = 1; i <= length; i--) {
+    for (int i = 1; i <= length; i++) {
         array[i-1] = i;
     }
     return array;
