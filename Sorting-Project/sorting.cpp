@@ -549,6 +549,27 @@ void full_run() {
     scenario_5_run();
 }
 
+//function to test optimization of counting_sort versions
+void test_counting() {
+
+    long count = 0;
+    long double avg1 = 0, avg2 = 0;
+    for (int i = START; i <= END*2; i+=100) {
+        int * array1 = get_fully_random_array(i);
+        int * array2 = new int[i];
+        std::copy(array1, array1 + i, array2);
+
+        long long t1 = speedtest(array1, i, &counting_sort_v1), t2 = speedtest(array2, i, &counting_sort_v2);
+        avg1 += t1;
+        avg2 += t2;
+        count ++;
+        cout << t1 << "\t" << t2 << endl;
+        delete [] array1;
+        delete [] array2;
+    }
+    cout << "Avg: " << "\t" << avg1/count << "\t" << avg2/count << endl;
+}
+
 int main() {
     full_run();
 
