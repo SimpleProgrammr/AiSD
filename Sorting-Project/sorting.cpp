@@ -242,11 +242,10 @@ void test_run() {
 void scenario_1_run() {
     const auto processor_count = std::thread::hardware_concurrency();
 
-    ofstream fout("Scenario1-full-rand.txt");
-    if (!fout.is_open()) {
-        cerr << "Unable to open file(Scenario 1)" << endl;
-        throw std::ios_base::failure("Unable to open file(Scenario 1)");
-    }
+    cout << "Counting sort: " << endl;
+    std::copy(array, array+length, temp_arr);
+    print_array(counting_sort_v2(temp_arr, length), length);
+}
 
     fout << "Data_size\tInsert_sort\tSelection_sort\tBubble_sort\tQuick_sort\tShell_sort\tHeap_sort\tStalin_sort\tThanos_sort" << endl;
 
